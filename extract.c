@@ -151,7 +151,7 @@ int main(int argc, char *argv[])
                     size_t datasizew = fwrite(buffer, 1, datasizer -(offset-offset_end), outfile);
                     if(datasizer -(offset-offset_end) != datasizew)
                     {
-                            printf("Writting output file occurs some error.\n");
+                            printf("Writting output file occurs some error.");
                     }
                     offset = offset_end;
                     break;
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
                     size_t datasizew = fwrite(buffer, 1, datasizer, outfile);
                     if(datasizer != datasizew)
                     {
-                            printf("Writting output file occurs some error.\n");
+                            printf("Writting output file occurs some error.");
                             break;
                     }
                 }
@@ -173,6 +173,6 @@ int main(int argc, char *argv[])
         fclose(outfile);
 
         if (buffer != NULL) free(buffer);
-        printf("%s generated Done. %lld bytes.\r\n", argv[8], offset- offset_start);
+        printf("\n%s generated Done. %lld bytes.\r\n", argv[8], offset- offset_start);
         return 0;
 }
