@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
                     }
                 }
                 printf("\r%ld...", times++);
-
+                fflush(stdout);
         }
 
         fclose(infile);
