@@ -1,7 +1,8 @@
 /*
  * This tools can extract some pieces from big file.
  * Dev by Hui Zhou, Dawei Mu at SDSC, UCSD.
- * gcc -Wall -g -D_FILE_OFFSET_BITS=64 extract.c   -o extract 。
+ * gcc -Wall -g -D_FILE_OFFSET_BITS=64 extract.c   -o extract 
+ * extract ./VX_120G 10 1000 1000 4 1 2000 ./output.txt
  * 网上说在c文件中定义：#define _FILE_OFFSET_BITS 64,无效。
  */
 #include <stdio.h> //标准输入输入出的头文件,printf和scanf都在这里了
@@ -88,6 +89,8 @@ int main(int argc, char *argv[])
                 exit(1);
         }
 
+        time_t  start,end;
+
         size_t nx = atoi(argv[2]);
         size_t ny = atoi(argv[3]);
         size_t nz = atoi(argv[4]);
@@ -96,7 +99,7 @@ int main(int argc, char *argv[])
         size_t EndTime = atoi(argv[7]);
 
         size_t buffersize = 0;
-        buffersize = 4 * 1024 * 1024;
+        buffersize = 64 * 1024 * 1024;
 
         unsigned char *buffer;
         buffer = (unsigned char *)malloc(buffersize * ElementByteSize);
@@ -106,7 +109,7 @@ int main(int argc, char *argv[])
                 return 1;
         }
 
-
+        time(&start);
 
         FILE * outfile, *infile;
         outfile = fopen(argv[8], "wb" );
@@ -172,7 +175,9 @@ int main(int argc, char *argv[])
         fclose(infile);
         fclose(outfile);
 
+        time(&end);
+
         if (buffer != NULL) free(buffer);
-        printf("\n%s generated Done. %lld bytes.\r\n", argv[8], offset- offset_start);
+        printf("\n%s generated Done. %lld bytes, %ld seconds.\r\n", argv[8], offset- offset_start, end-start);
         return 0;
 }
