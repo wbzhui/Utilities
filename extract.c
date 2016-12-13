@@ -10,6 +10,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <time.h>
 
 #define _LARGEFILE64_SOURCE     /* See feature_test_macros(7) */
 
