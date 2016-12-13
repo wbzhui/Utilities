@@ -134,6 +134,7 @@ int main(int argc, char *argv[])
         int fd = fileno(infile);
         set_offset(fd, offset_start);
         size_t times = 0;
+        size_t AmountTimes = ((offset_end - offset_start) / buffersize) + 1;
         while(!feof(infile))
         {
                 if(offset >= offset_end) break;
@@ -163,8 +164,9 @@ int main(int argc, char *argv[])
                             break;
                     }
                 }
-                printf("\r%ld...", times++);
+                printf("\r%ld / %ld ...", times++, AmountTimes);
                 fflush(stdout);
+
         }
 
         fclose(infile);
