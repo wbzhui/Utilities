@@ -2,7 +2,8 @@
  * This tools can extract some pieces from big file.
  * Dev by Hui Zhou, Dawei Mu at SDSC, UCSD.
  * gcc -Wall -g -D_FILE_OFFSET_BITS=64 extract.c   -o extract
- * extract ./VX_120G 10 1000 1000 4 1 2000 ./output.txt
+ * ./extract2 ./VX_120G 10 1000 1000 4 1 2000 ./output.txt
+ * On BWS ./extract2 /scratch/sciteam/droten/SAF_dyn/cvmsi25_mid_dmz/output_vlm/VZ 10560 5 1000 4 8950 9050   ~/VZ_D_08950-09050
  * 网上说在c文件中定义：#define _FILE_OFFSET_BITS 64,无效。
  */
 #include <stdio.h> //标准输入输入出的头文件,printf和scanf都在这里了
@@ -14,7 +15,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
 #define FILE_OFFSET_BITS 64
 #define _LARGEFILE64_SOURCE  1   /* See feature_test_macros(7) */
 #define LARGEFILE64_SOURCE  1 
@@ -25,8 +25,6 @@
 #endif
 
 #define MAXLEN 1024
-
-
 
 int main(int argc, char *argv[])
 {
@@ -65,6 +63,7 @@ int main(int argc, char *argv[])
 
         size_t buffersize = 0;
         buffersize = 64 * 1024 * 1024 * ElementByteSize;
+        buffersize = 64 * 1024 * 1024;
 
         unsigned char *buffer;
         buffer = (unsigned char *)malloc(buffersize );
@@ -97,14 +96,16 @@ int main(int argc, char *argv[])
         //locate file pointer to start position in input file
         // fpos_t offset_start = nx*ny*nz*ElementByteSize * StartTime;
         // fpos_t offset_end = nx*ny*nz*ElementByteSize * (EndTime+1);
-        off_t offset = nx*ny*nz*ElementByteSize * StartTime;
-        off_t offset_start = nx*ny*nz*ElementByteSize * StartTime;
-        off_t offset_end = nx*ny*nz*ElementByteSize * (EndTime+1);
+        off_t offset =       (off_t)nx*ny*nz*ElementByteSize * (off_t)StartTime;
+        off_t offset_start = (off_t)nx*ny*nz*ElementByteSize * (off_t)StartTime;
+        off_t offset_end =   (off_t)nx*ny*nz*ElementByteSize * (off_t)(EndTime+1);
+        //printf("offset:%ld,offset_start:%ld, offset_end:%ld\n",offset,offset_start, offset_end);
+        //printf("offset:%ld,offset_start:%ld, offset_end:%ld\n",offset,offset_start, offset_end);
         // fseek(infile, 0, SEEK_SET);
         // fsetpos(infile, &offset_start);
         //int fd = fileno(infile);
         //if(set_offset(fd, offset_start)<0)
-        printf("Debug offset_start:%ld,offset_end:%ld\n", offset_start, offset_end);
+        //printf("Debug offset_start:%ld,offset_end:%ld\n", offset_start, offset_end);
         lseek(fdin,0,SEEK_SET);
         if(lseek(fdin, offset_start,SEEK_SET)<0)
         {
@@ -115,6 +116,10 @@ int main(int argc, char *argv[])
         }
         size_t times = 0;
         size_t AmountTimes = ((offset_end - offset_start) / (buffersize));
+        //printf("offset:%ld,offset_start:%ld, offset_end:%ld\n",offset,offset_start, offset_end);
+        printf("nx:%d,ny:%d,nz:%d,ElementSize:%d,StartTime:%d,EndTime:%d\n",nx,ny,nz,ElementByteSize,StartTime,EndTime);
+        printf("offset from %ld to %ld.\n", offset_start, offset_end);
+
         while(1)
         {
                 if(offset >= offset_end) break;
@@ -123,11 +128,11 @@ int main(int argc, char *argv[])
                 ssize_t datasizer = read(fdin, buffer, buffersize);
                 if(datasizer <= 0)
                 {
-                        //printf("Reading file occurs some error. Request:%d, Actually got:%d\n", buffersize, datasizer);
+                        printf("Reading file occurs some error. Request:%d, Actually got:%d\n", buffersize, datasizer);
                         break;
                 }
                 offset += datasizer;
-                printf("Debug offset:%ld\n", offset);
+                //printf("Debug offset:%ld\n", offset);
                 if(offset > offset_end)
                 {
                     //size_t datasizew = fwrite(buffer, 1, datasizer -(offset-offset_end), outfile);
